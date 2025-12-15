@@ -96,6 +96,7 @@ fun ProfileScreen(onBackClicked: () -> Unit = {}, onEditClicked: () -> Unit = {}
 
                 Text(
                     text = "Johan Smith",
+                    color = Color.Red,
                     style = MaterialTheme.typography.headlineSmall,
                     modifier = Modifier.padding(top = 16.dp)
                 )
