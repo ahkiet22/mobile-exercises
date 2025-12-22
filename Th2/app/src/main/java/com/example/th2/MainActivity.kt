@@ -1,34 +1,51 @@
-package com.example.week2_1
+package com.example.th2
+
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.text.font.FontWeight
-import com.example.week2_1.ui.theme.Week2_1Theme
-
+import com.example.th2.ui.theme.Th2Theme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
         setContent {
-            Week2_1Theme {
+            Th2Theme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    NumberInputForm(modifier = Modifier.padding(innerPadding))
+                    NumberInputForm(
+                        modifier = Modifier.padding(innerPadding)
+                    )
                 }
             }
         }
@@ -42,13 +59,17 @@ fun NumberInputForm(modifier: Modifier = Modifier) {
     var boxCount by remember { mutableIntStateOf(0) }
     var isButtonClicked by remember { mutableStateOf(false) }
 
-    @Suppress("SpellCheckingInspection")
+    var successMessage by remember { mutableStateOf("") }
+
+
     Box(
         modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
         Column(
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -67,49 +88,47 @@ fun NumberInputForm(modifier: Modifier = Modifier) {
                     value = input,
                     onValueChange = { value ->
                         input = value
+                        isButtonClicked = false
+                        successMessage = ""
 
                         errorMessage =
                             when {
                                 value.isBlank() -> ""
-                                value.toIntOrNull() == null -> "Dữ liệu của bạn nhập không hợp lệ"
-                                value.toInt() < 1 -> "Số lượng phải lớn hơn 0"
+                                !value.contains('@') -> "Email phải chứa ký tự @"
                                 else -> ""
                             }
                     },
 
-                    label = { Text("Nhập vào số lượng") },
+                    label = { Text("Nhập email") },
                     isError = errorMessage.isNotEmpty(),
                     keyboardOptions = KeyboardOptions.Default.copy(
-                        keyboardType = KeyboardType.Number,
+                        keyboardType = KeyboardType.Email,
                         imeAction = ImeAction.Done
                     ),
                     keyboardActions = KeyboardActions(
-                        onDone = {}
+                        onDone = {
+                        }
                     ),
                     modifier = Modifier
-                        .weight(8f)
-                        .fillMaxWidth(),
+                        .weight(8f),
                     shape = RoundedCornerShape(16.dp)
                 )
 
                 Button(
                     onClick = {
-                        boxCount =
-                            if (input.isNotEmpty() && input.all { it.isDigit() }) {
-                                input.toInt()
-                            } else {
-                                0
-                            }
-                        isButtonClicked = true
+                        if (errorMessage.isEmpty() && input.isNotEmpty()) {
+                            successMessage = "Email đã được gửi thành công: $input"
+                            isButtonClicked = true
+                        }
                     },
+                    enabled = input.isNotEmpty() && errorMessage.isEmpty(),
 
                     modifier = Modifier
                         .weight(2f)
-                        .height(60.dp)
-                        .fillMaxWidth(),
+                        .height(60.dp),
                     shape = RoundedCornerShape(8.dp)
                 ) {
-                    Text("Tạo")
+                    Text("Gửi")
                 }
             }
 
@@ -120,36 +139,17 @@ fun NumberInputForm(modifier: Modifier = Modifier) {
                     style = MaterialTheme.typography.bodySmall,
                     modifier = Modifier.padding(top = 8.dp)
                 )
+            } else if (successMessage.isNotEmpty()) {
+                Text(
+                    text = successMessage,
+                    color = Color.Green,
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.padding(top = 8.dp)
+                )
             }
 
-            if (isButtonClicked) {
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 16.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
 
-                ) {
-                    items(boxCount) { index ->
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(48.dp)
-                                .background(Color.Red, RoundedCornerShape(16.dp))
-                                .padding(horizontal = 16.dp),
-                            contentAlignment = Alignment.Center
-
-                        ) {
-                            Text(
-                                text = "${index + 1}",
-                                color = Color.White,
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
-                    }
-                }
-
-
+            if (isButtonClicked && boxCount > 0) {
             }
         }
     }
@@ -158,8 +158,8 @@ fun NumberInputForm(modifier: Modifier = Modifier) {
 
 @Preview(showBackground = true)
 @Composable
-fun NumberInputFormPreview() {
-    Week2_1Theme {
+fun EmailInputFormPreview() {
+    Th2Theme {
         NumberInputForm()
     }
 }
