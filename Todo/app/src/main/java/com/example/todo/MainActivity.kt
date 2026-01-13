@@ -37,7 +37,6 @@ import com.example.todo.ui.theme.TodoTheme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-// --- OOP: Data Model ---
 data class OnBoardingPage(
     val title: String,
     val description: String,
@@ -74,12 +73,10 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-// --- Navigation Host ---
 @Composable
 fun AppNavigation() {
     val navController = rememberNavController()
 
-    // Sơ đồ luồng: Splash -> Onboarding -> Login (<-> ForgotPassword -> Verify -> Reset -> Confirm) -> Home
     NavHost(navController = navController, startDestination = "splash") {
         composable("splash") {
             SplashScreen(navController = navController)
@@ -224,7 +221,6 @@ fun OnBoardingPageUI(page: OnBoardingPage) {
     }
 }
 
-// --- Màn hình Login ---
 @Composable
 fun LoginScreen(navController: NavController) {
     var username by remember { mutableStateOf("") }
@@ -302,7 +298,6 @@ fun LoginScreen(navController: NavController) {
     }
 }
 
-// --- Màn hình Forgot Password ---
 @Composable
 fun ForgotPasswordScreen(navController: NavController) {
     var email by remember { mutableStateOf("") }
@@ -355,8 +350,6 @@ fun ForgotPasswordScreen(navController: NavController) {
 
             Button(
                 onClick = {
-                    // Giả lập gửi mã -> chuyển sang màn Verify
-                    // Thực tế: gọi API gửi mã đến email ở đây
                     navController.navigate("forgot_verify")
                 },
                 modifier = Modifier
@@ -371,7 +364,6 @@ fun ForgotPasswordScreen(navController: NavController) {
     }
 }
 
-// --- Màn hình Verify Code (OTP) ---
 @Composable
 fun VerifyCodeScreen(navController: NavController) {
     val blueColor = Color(0xFF2196F3)
@@ -414,7 +406,6 @@ fun VerifyCodeScreen(navController: NavController) {
                             if (v.length <= 1 && (v.isEmpty() || v[0].isDigit())) {
                                 otpDigits[index] = v
                                 if (v.isNotEmpty()) {
-                                    // move focus to next
                                     if (index < otpDigits.lastIndex) {
                                         // request next by focusing next field: simpler to clear focus then rely on keyboard navigation
                                         // or user can tap; for full focus control use FocusRequester per field
@@ -439,7 +430,6 @@ fun VerifyCodeScreen(navController: NavController) {
 
             Button(
                 onClick = {
-                    // Kiểm tra mã OTP (giả lập) rồi chuyển đến reset
                     navController.navigate("reset_password")
                 },
                 modifier = Modifier
@@ -460,7 +450,6 @@ fun VerifyCodeScreen(navController: NavController) {
     }
 }
 
-// --- Màn hình Reset Password (create new password) ---
 @Composable
 fun ResetPasswordScreen(navController: NavController) {
     var password by remember { mutableStateOf("") }
@@ -534,7 +523,6 @@ fun ResetPasswordScreen(navController: NavController) {
 
             Button(
                 onClick = {
-                    // kiểm tra password == confirm, valid -> chuyển màn Confirm
                     navController.navigate("confirm")
                 },
                 modifier = Modifier
@@ -549,11 +537,8 @@ fun ResetPasswordScreen(navController: NavController) {
     }
 }
 
-// --- Màn hình Confirm (hiển thị tóm tắt trước submit) ---
 @Composable
 fun ConfirmScreen(navController: NavController) {
-    // Trong thực tế bạn sẽ truyền data qua nav args hoặc shared ViewModel.
-    // Ở ví dụ đơn giản này ta hiển thị các trường demo.
     var email by remember { mutableStateOf("uth@gmail.com") }
     var code by remember { mutableStateOf("123456") }
     var password by remember { mutableStateOf("newpassword") }
@@ -616,7 +601,6 @@ fun ConfirmScreen(navController: NavController) {
 
             Button(
                 onClick = {
-                    // Gọi API đổi mật khẩu, sau khi thành công điều hướng về login/home tuỳ cần
                     navController.navigate("login") {
                         popUpTo("confirm") { inclusive = true }
                     }
