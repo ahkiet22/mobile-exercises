@@ -2,6 +2,7 @@ import { auth } from '@/config/firebase';
 import { useAuth } from '@/contexts/AuthContext';
 import { makeRedirectUri } from 'expo-auth-session';
 import * as Google from 'expo-auth-session/providers/google';
+import { useRouter } from 'expo-router';
 import * as WebBrowser from 'expo-web-browser';
 import { GoogleAuthProvider, signInWithCredential } from 'firebase/auth';
 import { useEffect } from 'react';
@@ -10,8 +11,9 @@ import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 WebBrowser.maybeCompleteAuthSession();
 
 export default function Login() {
+  const router = useRouter();
   const [request, response, promptAsync] = Google.useIdTokenAuthRequest({
-    clientId: '', // TODO: Add your Web Client ID
+    clientId: '565944352871-5o6ofd9o8eh5lr3noli2htlrhi4paaan.apps.googleusercontent.com', // TODO: Add your Web Client ID
     iosClientId: 'YOUR_IOS_CLIENT_ID', // TODO: Add your iOS Client ID
     androidClientId: 'YOUR_ANDROID_CLIENT_ID', // TODO: Add your Android Client ID
   });
@@ -34,11 +36,11 @@ export default function Login() {
     <View style={styles.container}>
       <View style={styles.content}>
         <View style={styles.logoContainer}>
-            <Image 
-                source={{uri: 'https://cdn-icons-png.flaticon.com/512/2991/2991148.png'}} // Placeholder for UTH logo
+            {/* <Image 
+                source={{uri: 'https://tools1s.com/images/dkmh/ut-logo.png'}} // Placeholder for UTH logo
                 style={styles.logo}
                 resizeMode="contain"
-            />
+            /> */}
             <Text style={styles.uthText}>UTH</Text>
             <Text style={styles.subLogoText}>UNIVERSITY OF TRANSPORT HOCHIMINH CITY</Text>
         </View>
@@ -60,15 +62,16 @@ export default function Login() {
                     style={styles.googleIcon}
                 />
                 <Text style={styles.googleButtonText}>SIGN IN WITH GOOGLE</Text>
-                <Text style={styles.googleButtonText}>SIGN IN WITH GOOGLE</Text>
             </TouchableOpacity>
+
+
         </View>
 
         {/* Debug Info */}
-        <Text style={{ marginTop: 20, color: 'red', textAlign: 'center' }} selectable>
+        {/* <Text style={{ marginTop: 20, color: 'red', textAlign: 'center' }} selectable>
           Redirect URI (Copy this to Google Console):{'\n'}
           {makeRedirectUri()}
-        </Text>
+        </Text> */}
 
         <Text style={styles.footer}>© UTHSmartTasks</Text>
       </View>
@@ -150,7 +153,6 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     paddingHorizontal: 20,
     borderRadius: 8,
-    width: '100%',
   },
   googleIcon: {
     width: 20,

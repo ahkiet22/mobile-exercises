@@ -1,21 +1,28 @@
+import { auth } from '@/config/firebase';
 import { useAuth } from '@/contexts/AuthContext';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import { signOut } from 'firebase/auth';
 import { Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 export default function Profile() {
-  const { user } = useAuth();
   const router = useRouter();
+  const { user } = useAuth();
+  console.log(user)
 
-  const handleBack = () => {
-    router.back();
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+    } catch (error) {
+      console.error("Error signing out: ", error);
+    }
   };
 
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-           <Ionicons name="chevron-back" size={24} color="white" />
+        <TouchableOpacity style={styles.backButton} onPress={handleLogout}>
+           <Ionicons name="log-out-outline" size={24} color="white" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Profile</Text>
         <View style={{ width: 40 }} /> 
@@ -58,10 +65,17 @@ export default function Profile() {
             </View>
         </View>
 
+        <TouchableOpacity 
+             style={[styles.backActionButton, { backgroundColor: '#FF6347', marginBottom: 20, marginTop: 0 }]} 
+             onPress={() => router.push('/product-detail')}
+        >
+             <Text style={styles.backActionText}>View Product Detail</Text>
+        </TouchableOpacity>
+
         <View style={styles.spacer} />
 
-        <TouchableOpacity style={styles.backActionButton} onPress={handleBack}>
-            <Text style={styles.backActionText}>Back</Text>
+        <TouchableOpacity style={styles.backActionButton} onPress={handleLogout}>
+            <Text style={styles.backActionText}>Logout</Text>
         </TouchableOpacity>
 
       </View>
